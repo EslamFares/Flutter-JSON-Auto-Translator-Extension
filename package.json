@@ -1,0 +1,64 @@
+{
+  "name": "flutter-localization-json-translation-auto",
+  "displayName": "FlutterLocaizationJsonTranslationAuto",
+  "description": "Auto-translate and sync Flutter localization JSON files from selected Dart strings.",
+  "version": "0.1.0",
+  "publisher": "flutter-dev",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "flutter",
+    "localization",
+    "translation",
+    "i18n",
+    "json"
+  ],
+  "activationEvents": [
+    "onLanguage:dart"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "flutterLocaizationJsonTranslationAuto.translateToAllLangs",
+        "title": "Translate to all langs",
+        "category": "Flutter Localization"
+      }
+    ],
+    "configuration": {
+      "title": "Flutter Localization JSON Translation Auto",
+      "properties": {
+        "flutterLocaizationJsonTranslationAuto.translationsPath": {
+          "type": "string",
+          "default": "assets/translations",
+          "description": "Relative path from workspace root to translation JSON files."
+        },
+        "flutterLocaizationJsonTranslationAuto.sourceLocaleFile": {
+          "type": "string",
+          "default": "en-US.json",
+          "description": "Source locale filename. This file receives the original text without translation."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "google-translate-api-x": "^10.7.2"
+  }
+}
