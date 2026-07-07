@@ -1,6 +1,6 @@
 {
   "name": "flutter-localization-json-translation-auto",
-  "displayName": "FlutterLocaizationJsonTranslationAuto",
+  "displayName": "Flutter JSON Auto-Translator",
   "description": "Auto-translate and sync Flutter localization JSON files from selected Dart strings.",
   "version": "0.1.4",
   "publisher": "flutter-dev",
@@ -24,12 +24,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "flutterLocaizationJsonTranslationAuto.translateToAllLangs",
+        "command": "flutterJsonAutoTranslator.translateToAllLangs",
         "title": "Translate to all langs",
         "category": "Flutter Localization"
       },
       {
-        "command": "flutterLocaizationJsonTranslationAuto.translateToAllLangsFromAr",
+        "command": "flutterJsonAutoTranslator.translateToAllLangsFromAr",
         "title": "Translate to all langs From Ar",
         "category": "Flutter Localization"
       }
@@ -37,27 +37,27 @@
     "configuration": {
       "title": "Flutter Localization JSON Translation Auto",
       "properties": {
-        "flutterLocaizationJsonTranslationAuto.translationsPath": {
+        "flutterJsonAutoTranslator.translationsPath": {
           "type": "string",
           "default": "assets/translations",
           "description": "Relative path from workspace root to translation JSON files."
         },
-        "flutterLocaizationJsonTranslationAuto.sourceLocaleFile": {
+        "flutterJsonAutoTranslator.sourceLocaleFile": {
           "type": "string",
           "default": "en-US.json",
           "description": "Source locale filename. This file receives the original text without translation."
         },
-        "flutterLocaizationJsonTranslationAuto.abbreviateLongKeys": {
+        "flutterJsonAutoTranslator.abbreviateLongKeys": {
           "type": "boolean",
           "default": false,
           "description": "Abbreviate suggested JSON keys when the selected text is very long."
         },
-        "flutterLocaizationJsonTranslationAuto.maxKeyWords": {
+        "flutterJsonAutoTranslator.maxKeyWords": {
           "type": "number",
           "default": 5,
           "description": "Maximum number of words to use for abbreviated keys (only when abbreviateLongKeys is enabled)."
         },
-        "flutterLocaizationJsonTranslationAuto.stripSelection": {
+        "flutterJsonAutoTranslator.stripSelection": {
           "type": "boolean",
           "default": true,
           "description": "Strip surrounding quotes (', \", ''', \"\"\") and trailing semicolons from selected text."

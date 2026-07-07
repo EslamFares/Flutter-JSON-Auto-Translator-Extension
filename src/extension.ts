@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import translate from 'google-translate-api-x';
 import { syncTranslationToAllLangs } from './localizationSync';
 
-const COMMAND_ID = 'flutterLocaizationJsonTranslationAuto.translateToAllLangs';
+const COMMAND_ID = 'flutterJsonAutoTranslator.translateToAllLangs';
 const ACTION_TITLE = 'Translate to all langs';
-const COMMAND_ID_AR = 'flutterLocaizationJsonTranslationAuto.translateToAllLangsFromAr';
+const COMMAND_ID_AR = 'flutterJsonAutoTranslator.translateToAllLangsFromAr';
 const ACTION_TITLE_AR = 'Translate to all langs From Ar';
 
 /**
@@ -44,7 +44,7 @@ export function extractSelectedString(
 
   // Optionally strip quotes and trailing semicolons
   // //& إزالة علامات الاقتباس والفواصل المنقوطة اختيارياً
-  const config = vscode.workspace.getConfiguration('flutterLocaizationJsonTranslationAuto');
+  const config = vscode.workspace.getConfiguration('flutterJsonAutoTranslator');
   if (config.get<boolean>('stripSelection', true)) {
     text = text.replace(/^'''|^"""/, '');
     text = text.replace(/'''$|"""$/, '');
@@ -135,7 +135,7 @@ async function runTranslateToAllLangs(
     return;
   }
 
-  const config = vscode.workspace.getConfiguration('flutterLocaizationJsonTranslationAuto');
+  const config = vscode.workspace.getConfiguration('flutterJsonAutoTranslator');
   const abbreviate = config.get<boolean>('abbreviateLongKeys', false);
   const maxWords = abbreviate ? config.get<number>('maxKeyWords', 5) : undefined;
   const jsonKey = await promptForJsonKey(suggestJsonKeyFromText(sourceText, maxWords));
@@ -219,7 +219,7 @@ async function runTranslateToAllLangsFromAr(
     return;
   }
 
-  const config = vscode.workspace.getConfiguration('flutterLocaizationJsonTranslationAuto');
+  const config = vscode.workspace.getConfiguration('flutterJsonAutoTranslator');
   const abbreviate = config.get<boolean>('abbreviateLongKeys', false);
   const maxWords = abbreviate ? config.get<number>('maxKeyWords', 5) : undefined;
   const jsonKey = await promptForJsonKey(suggestJsonKeyFromText(englishText, maxWords));

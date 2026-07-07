@@ -1,80 +1,40 @@
-# FlutterLocaizationJsonTranslationAuto
+# Flutter JSON Auto-Translator
 
-VS Code extension that helps Flutter developers auto-translate and sync localization JSON files from selected Dart strings.
+Auto-translate and sync Flutter localization JSON files from selected Dart strings. Supports both English and Arabic source text.
 
 ## Features
 
 - Shows a **Code Action** (lightbulb) when you select a string in a Dart file
-- Prompts for a JSON key (e.g. `welcome_message`)
-- Finds all `.json` files in `assets/translations/`
-- Writes the original text to `en-US.json`
+- Two commands: **Translate to all langs** (English) and **Translate to all langs From Ar** (Arabic)
+- Translates Arabic text to English first for key suggestion, then to all target languages
+- Prompts for a JSON key with auto-generated camelCase suggestion
+- Finds all `.json` files in your translations directory
+- Writes original text to the source locale file (e.g. `en-US.json`)
 - Translates into every other locale using `google-translate-api-x`
 - Appends each new key-value pair at the bottom of each JSON file
 
-## Project structure
+## How to Use
 
-```
-.
-├── package.json
-├── esbuild.js
-├── tsconfig.json
-├── src/
-│   ├── extension.ts          # Activation, Code Action, command
-│   ├── localizationSync.ts   # Translation workflow
-│   └── jsonUtils.ts          # JSON append helper
-└── dist/
-    └── extension.js          # Bundled output (generated)
-```
+1. Open a Dart file in a Flutter project with `assets/translations/*.json`
+2. Select a string literal (e.g. `'Welcome to our app'`) or Arabic text
+3. Click the lightbulb or open the command palette
+4. Choose:
+   - **Translate to all langs** — for English source text
+   - **Translate to all langs From Ar** — for Arabic source text (automatically translates to English for key suggestion)
+5. Confirm or edit the suggested camelCase JSON key
+6. Wait for translation to complete — all locale files are updated
 
-## Setup
-
-```bash
-npm install
-npm run compile
-```
-
-## Run in development
-
-1. Open this folder in VS Code / Cursor.
-2. Press `F5` to launch an Extension Development Host.
-3. Open a Flutter project that contains `assets/translations/*.json`.
-4. Open a Dart file, select a string, click the lightbulb, and choose **Translate to all langs**.
-
-## Package as VSIX
-
-```bash
-npm install -g @vscode/vsce   # one-time
-npm run package
-vsce package
-```
-
-Install the generated `.vsix` file:
-
-```bash
-code --install-extension flutter-localization-json-translation-auto-0.1.0.vsix
-```
-
-## Settings
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `flutterLocaizationJsonTranslationAuto.translationsPath` | `assets/translations` | Relative path to translation JSON files |
-| `flutterLocaizationJsonTranslationAuto.sourceLocaleFile` | `en-US.json` | Source locale file (original text, no translation) |
-
-## Example workflow
-
-**Dart file**
+### Example
 
 ```dart
 Text('Welcome to our app')
 ```
 
-1. Select `'Welcome to our app'` (or the inner text).
-2. Choose **Translate to all langs**.
-3. Enter key: `welcome_message`.
+1. Select `'Welcome to our app'`
+2. Choose **Translate to all langs**
+3. Enter key: `welcome_message`
 
-**Result in `assets/translations/ar-EG.json`**
-
+**Result in `assets/translations/ar-EG.json`:**
 ```json
 {
   "existing_key": "existing value",
@@ -82,8 +42,39 @@ Text('Welcome to our app')
 }
 ```
 
-## Notes
+## Settings
 
-- Translation uses the free unofficial Google Translate client (`google-translate-api-x`). Network access is required.
-- Language codes are derived from filenames: `ar-EG.json` → `ar`, `fr-FR.json` → `fr`.
-- If a key already exists in a file, that file is skipped.
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `flutterJsonAutoTranslator.translationsPath` | `assets/translations` | Relative path from workspace root to translation JSON files |
+| `flutterJsonAutoTranslator.sourceLocaleFile` | `en-US.json` | Source locale filename — receives original text (or English translation for Arabic flow) |
+| `flutterJsonAutoTranslator.abbreviateLongKeys` | `false` | When enabled, suggested keys use only the first N words for very long text |
+| `flutterJsonAutoTranslator.maxKeyWords` | `5` | Maximum words to use in abbreviated keys (only when `abbreviateLongKeys` is enabled) |
+| `flutterJsonAutoTranslator.stripSelection` | `true` | Strip surrounding quotes (`'`, `"`, `'''`, `"""`) and trailing semicolons from selected text |
+
+## Requirements
+
+- Flutter project with localization JSON files in a translations directory
+- Network access (uses Google Translate API)
+
+## Extension Settings
+
+You can configure these in VS Code Settings → Extensions → Flutter JSON Auto-Translator, or in `.vscode/settings.json`.
+
+## Known Issues
+
+- Translation uses the free unofficial Google Translate client — rate limits may apply
+- Language codes are derived from filenames: `ar-EG.json` → `ar`, `fr-FR.json` → `fr`
+- If a key already exists in a file, that file is skipped
+
+## Release Notes
+
+### 0.1.4
+
+- Added Arabic source text support ("Translate to all langs From Ar")
+- Added key abbreviation settings (`abbreviateLongKeys`, `maxKeyWords`)
+- Added selection stripping setting (`stripSelection`)
+
+### 0.1.0
+
+- Initial release with English translation and Code Action support

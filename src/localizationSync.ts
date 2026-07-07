@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import translate from 'google-translate-api-x';
 import { appendKeyToJsonFile, DuplicateKeyError } from './jsonUtils';
 
-const EXTENSION_ID = 'flutterLocaizationJsonTranslationAuto';
+const EXTENSION_ID = 'flutterJsonAutoTranslator';
 
 export interface SyncResult {
   updated: string[];
@@ -87,7 +87,7 @@ export async function syncTranslationToAllLangs(
   const translationsDir = findTranslationsDirectory();
   if (!translationsDir) {
     throw new Error(
-      'Could not find assets/translations directory. Check flutterLocaizationJsonTranslationAuto.translationsPath setting.'
+      'Could not find assets/translations directory. Check flutterJsonAutoTranslator.translationsPath setting.'
     );
   }
 
