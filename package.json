@@ -2,7 +2,7 @@
   "name": "flutter-localization-json-translation-auto",
   "displayName": "FlutterLocaizationJsonTranslationAuto",
   "description": "Auto-translate and sync Flutter localization JSON files from selected Dart strings.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "flutter-dev",
   "engines": {
     "vscode": "^1.85.0"
@@ -27,6 +27,11 @@
         "command": "flutterLocaizationJsonTranslationAuto.translateToAllLangs",
         "title": "Translate to all langs",
         "category": "Flutter Localization"
+      },
+      {
+        "command": "flutterLocaizationJsonTranslationAuto.translateToAllLangsFromAr",
+        "title": "Translate to all langs From Ar",
+        "category": "Flutter Localization"
       }
     ],
     "configuration": {
@@ -41,6 +46,16 @@
           "type": "string",
           "default": "en-US.json",
           "description": "Source locale filename. This file receives the original text without translation."
+        },
+        "flutterLocaizationJsonTranslationAuto.abbreviateLongKeys": {
+          "type": "boolean",
+          "default": false,
+          "description": "Abbreviate suggested JSON keys when the selected text is very long."
+        },
+        "flutterLocaizationJsonTranslationAuto.maxKeyWords": {
+          "type": "number",
+          "default": 5,
+          "description": "Maximum number of words to use for abbreviated keys (only when abbreviateLongKeys is enabled)."
         }
       }
     }

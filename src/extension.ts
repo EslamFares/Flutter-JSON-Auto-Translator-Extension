@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
+import translate from 'google-translate-api-x';
 import { syncTranslationToAllLangs } from './localizationSync';
 
 const COMMAND_ID = 'flutterLocaizationJsonTranslationAuto.translateToAllLangs';
 const ACTION_TITLE = 'Translate to all langs';
+const COMMAND_ID_AR = 'flutterLocaizationJsonTranslationAuto.translateToAllLangsFromAr';
+const ACTION_TITLE_AR = 'Translate to all langs From Ar';
 
 /**
  * Extract a Dart/Flutter string literal from the current editor selection.
@@ -53,7 +56,7 @@ export function extractSelectedString(
  * //& إنشاء مفتاح JSON بصيغة camelCase من النص المحدد
  * Examples: "My name Eslam" -> "myNameEslam", "Go" -> "go"
  */
-export function suggestJsonKeyFromText(text: string): string {
+export function suggestJsonKeyFromText(text: string, maxWords?: number): string {
   const words = text
     .trim()
     .split(/[^a-zA-Z0-9]+/)
@@ -63,7 +66,11 @@ export function suggestJsonKeyFromText(text: string): string {
     return '';
   }
 
-  return words
+  const limited = maxWords !== undefined && maxWords > 0
+    ? words.slice(0, maxWords)
+    : words;
+
+  return limited
     .map((word, index) => {
       const lower = word.toLowerCase();
       if (index === 0) {
@@ -120,13 +127,104 @@ async function runTranslateToAllLangs(
     return;
   }
 
-  const jsonKey = await promptForJsonKey(suggestJsonKeyFromText(sourceText));
+  const config = vscode.workspace.getConfiguration('flutterLocaizationJsonTranslationAuto');
+  const abbreviate = config.get<boolean>('abbreviateLongKeys', false);
+  const maxWords = abbreviate ? config.get<number>('maxKeyWords', 5) : undefined;
+  const jsonKey = await promptForJsonKey(suggestJsonKeyFromText(sourceText, maxWords));
   if (!jsonKey) {
     return;
   }
 
   try {
     const result = await syncTranslationToAllLangs(sourceText, jsonKey);
+
+    const summaryParts: string[] = [];
+    if (result.updated.length > 0) {
+      summaryParts.push(`Updated: ${result.updated.join(', ')}`);
+    }
+    if (result.skipped.length > 0) {
+      summaryParts.push(`Skipped (key exists): ${result.skipped.join(', ')}`);
+    }
+    if (result.failed.length > 0) {
+      summaryParts.push(
+        `Failed: ${result.failed.map((item) => `${item.file} (${item.reason})`).join('; ')}`
+      );
+    }
+
+    if (result.updated.length > 0) {
+      vscode.window.showInformationMessage(
+        `Localization synced for key "${jsonKey}". ${summaryParts.join(' | ')}`
+      );
+    } else if (result.skipped.length > 0 && result.failed.length === 0) {
+      vscode.window.showWarningMessage(
+        `Key "${jsonKey}" already exists in all translation files.`
+      );
+    } else {
+      vscode.window.showErrorMessage(
+        `Could not sync localization. ${summaryParts.join(' | ')}`
+      );
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred.';
+    vscode.window.showErrorMessage(`Translation failed: ${message}`);
+  }
+}
+
+/**
+ * Translate Arabic text to English for key generation.
+ * //& ترجمة النص العربي إلى الإنجليزية لإنشاء المفتاح
+ */
+async function translateArabicToEnglish(arabicText: string): Promise<string> {
+  const result = await translate(arabicText, { to: 'en', from: 'ar', forceTo: true });
+  return result.text;
+}
+
+/**
+ * Run the translate-and-sync workflow for Arabic source text.
+ * //& تنفيذ سير عمل الترجمة للنص العربي
+ */
+async function runTranslateToAllLangsFromAr(
+  document: vscode.TextDocument,
+  selection: vscode.Selection
+): Promise<void> {
+  if (document.languageId !== 'dart') {
+    vscode.window.showWarningMessage('This action only works in Dart files.');
+    return;
+  }
+
+  const arabicText = extractSelectedString(document, selection);
+  if (!arabicText) {
+    vscode.window.showWarningMessage(
+      'Select a string literal in your Dart file first.'
+    );
+    return;
+  }
+
+  let englishText: string;
+  try {
+    englishText = await translateArabicToEnglish(arabicText);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown translation error.';
+    vscode.window.showErrorMessage(`Arabic to English translation failed: ${message}`);
+    return;
+  }
+
+  const config = vscode.workspace.getConfiguration('flutterLocaizationJsonTranslationAuto');
+  const abbreviate = config.get<boolean>('abbreviateLongKeys', false);
+  const maxWords = abbreviate ? config.get<number>('maxKeyWords', 5) : undefined;
+  const jsonKey = await promptForJsonKey(suggestJsonKeyFromText(englishText, maxWords));
+  if (!jsonKey) {
+    return;
+  }
+
+  try {
+    const result = await syncTranslationToAllLangs(
+      arabicText,
+      jsonKey,
+      { sourceLocaleValue: englishText, fromLanguage: 'ar' }
+    );
 
     const summaryParts: string[] = [];
     if (result.updated.length > 0) {
@@ -185,18 +283,28 @@ class FlutterLocalizationCodeActionProvider implements vscode.CodeActionProvider
       return undefined;
     }
 
-    const action = new vscode.CodeAction(
+    const actionEn = new vscode.CodeAction(
       ACTION_TITLE,
       vscode.CodeActionKind.QuickFix
     );
-    action.command = {
+    actionEn.command = {
       command: COMMAND_ID,
       title: ACTION_TITLE,
       arguments: [document.uri, selection],
     };
-    action.isPreferred = true;
+    actionEn.isPreferred = true;
 
-    return [action];
+    const actionAr = new vscode.CodeAction(
+      ACTION_TITLE_AR,
+      vscode.CodeActionKind.QuickFix
+    );
+    actionAr.command = {
+      command: COMMAND_ID_AR,
+      title: ACTION_TITLE_AR,
+      arguments: [document.uri, selection],
+    };
+
+    return [actionEn, actionAr];
   }
 }
 
@@ -251,6 +359,35 @@ export function activate(context: vscode.ExtensionContext): void {
         }
 
         await runTranslateToAllLangs(document, activeSelection);
+      }
+    )
+  );
+
+  // Register Arabic command
+  // //& تسجيل الأمر العربي
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      COMMAND_ID_AR,
+      async (uri?: vscode.Uri, selection?: vscode.Selection) => {
+        let document: vscode.TextDocument;
+        let activeSelection: vscode.Selection;
+
+        if (uri && selection) {
+          document = await vscode.workspace.openTextDocument(uri);
+          activeSelection = selection;
+        } else {
+          const editor = vscode.window.activeTextEditor;
+          if (!editor) {
+            vscode.window.showWarningMessage(
+              'Open a Dart file and select a string first.'
+            );
+            return;
+          }
+          document = editor.document;
+          activeSelection = editor.selection;
+        }
+
+        await runTranslateToAllLangsFromAr(document, activeSelection);
       }
     )
   );

@@ -12,6 +12,11 @@ export interface SyncResult {
   failed: { file: string; reason: string }[];
 }
 
+export interface SyncOptions {
+  sourceLocaleValue?: string;
+  fromLanguage?: string;
+}
+
 /**
  * Extract language code from a locale filename (e.g. ar-EG.json -> ar).
  * //& استخراج رمز اللغة من اسم ملف الترجمة
@@ -55,13 +60,15 @@ export function listTranslationFiles(translationsDir: string): string[] {
  * Translate text to the target language using google-translate-api-x.
  * //& ترجمة النص إلى اللغة المطلوبة
  */
-async function translateText(text: string, toLanguage: string): Promise<string> {
-  const result = await translate(text, {
+async function translateText(text: string, toLanguage: string, fromLanguage?: string): Promise<string> {
+  const params: Record<string, unknown> = {
     to: toLanguage,
-    from: 'en',
     forceTo: true,
-  });
-
+  };
+  if (fromLanguage) {
+    params.from = fromLanguage;
+  }
+  const result = await translate(text, params);
   return result.text;
 }
 
@@ -71,7 +78,8 @@ async function translateText(text: string, toLanguage: string): Promise<string> 
  */
 export async function syncTranslationToAllLangs(
   sourceText: string,
-  jsonKey: string
+  jsonKey: string,
+  options?: SyncOptions
 ): Promise<SyncResult> {
   const config = vscode.workspace.getConfiguration(EXTENSION_ID);
   const sourceLocaleFile = config.get<string>('sourceLocaleFile', 'en-US.json');
@@ -113,12 +121,10 @@ export async function syncTranslationToAllLangs(
           let translatedValue: string;
 
           if (fileName === sourceLocaleFile) {
-            // Source locale keeps the original English text
-            // //& ملف اللغة المصدر يحتفظ بالنص الإنجليزي الأصلي
-            translatedValue = sourceText;
+            translatedValue = options?.sourceLocaleValue ?? sourceText;
           } else {
             const languageCode = getLanguageCodeFromFilename(fileName);
-            translatedValue = await translateText(sourceText, languageCode);
+            translatedValue = await translateText(sourceText, languageCode, options?.fromLanguage);
           }
 
           appendKeyToJsonFile(filePath, jsonKey, translatedValue);
