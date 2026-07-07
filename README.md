@@ -24,6 +24,17 @@ Auto-translate and sync Flutter localization JSON files from selected Dart strin
 5. Confirm or edit the suggested camelCase JSON key
 6. Wait for translation to complete — all locale files are updated
 
+### Demo Videos
+
+<video src="images/videos/v1_Translate to all langs_quick access.mp4" controls width="800"></video>
+*Translate to all langs — quick access*
+
+<video src="images/videos/v2_Translate to all langs frm arabic _quick access.mp4.mp4" controls width="800"></video>
+*Translate to all langs from Arabic*
+
+<video src="images/videos/v3_command help.mp4" controls width="800"></video>
+*Command palette help*
+
 ### Example
 
 ```dart
