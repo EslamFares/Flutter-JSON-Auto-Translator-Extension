@@ -26,13 +26,19 @@ Auto-translate and sync Flutter localization JSON files from selected Dart strin
 
 ### Demo Videos
 
-<video src="images/videos/v1_Translate to all langs_quick access.mp4" controls width="800"></video>
+<video src="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/raw/main/images/videos/v1_Translate%20to%20all%20langs_quick%20access.mp4" controls width="800">
+  <a href="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v1_Translate%20to%20all%20langs_quick%20access.mp4">Download video</a>
+</video>
 *Translate to all langs — quick access*
 
-<video src="images/videos/v2_Translate to all langs frm arabic _quick access.mp4.mp4" controls width="800"></video>
+<video src="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/raw/main/images/videos/v2_Translate%20to%20all%20langs%20frm%20arabic%20_quick%20access.mp4.mp4" controls width="800">
+  <a href="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v2_Translate%20to%20all%20langs%20frm%20arabic%20_quick%20access.mp4.mp4">Download video</a>
+</video>
 *Translate to all langs from Arabic*
 
-<video src="images/videos/v3_command help.mp4" controls width="800"></video>
+<video src="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/raw/main/images/videos/v3_command%20help.mp4" controls width="800">
+  <a href="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v3_command%20help.mp4">Download video</a>
+</video>
 *Command palette help*
 
 ### Example
