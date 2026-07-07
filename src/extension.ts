@@ -49,21 +49,48 @@ export function extractSelectedString(
 }
 
 /**
+ * Generate a camelCase JSON key from selected text.
+ * //& إنشاء مفتاح JSON بصيغة camelCase من النص المحدد
+ * Examples: "My name Eslam" -> "myNameEslam", "Go" -> "go"
+ */
+export function suggestJsonKeyFromText(text: string): string {
+  const words = text
+    .trim()
+    .split(/[^a-zA-Z0-9]+/)
+    .filter(Boolean);
+
+  if (words.length === 0) {
+    return '';
+  }
+
+  return words
+    .map((word, index) => {
+      const lower = word.toLowerCase();
+      if (index === 0) {
+        return lower;
+      }
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join('');
+}
+
+/**
  * Prompt the user for a JSON key and validate it.
  * //& مطالبة المستخدم بإدخال مفتاح JSON والتحقق منه
  */
-async function promptForJsonKey(): Promise<string | undefined> {
+async function promptForJsonKey(defaultKey: string): Promise<string | undefined> {
   const jsonKey = await vscode.window.showInputBox({
     title: 'Flutter Localization Key',
-    prompt: 'Enter the JSON key to add (e.g. welcome_message)',
-    placeHolder: 'welcome_message',
+    prompt: 'Enter the JSON key to add (camelCase)',
+    value: defaultKey,
+    placeHolder: defaultKey || 'myNameEslam',
     validateInput: (value) => {
       const trimmed = value.trim();
       if (!trimmed) {
         return 'Key cannot be empty.';
       }
-      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(trimmed)) {
-        return 'Use snake_case letters, numbers, and underscores only.';
+      if (!/^[a-z][a-zA-Z0-9]*$/.test(trimmed)) {
+        return 'Use camelCase: start with a lowercase letter, then letters or numbers.';
       }
       return undefined;
     },
@@ -93,7 +120,7 @@ async function runTranslateToAllLangs(
     return;
   }
 
-  const jsonKey = await promptForJsonKey();
+  const jsonKey = await promptForJsonKey(suggestJsonKeyFromText(sourceText));
   if (!jsonKey) {
     return;
   }
@@ -195,14 +222,35 @@ export function activate(context: vscode.ExtensionContext): void {
     )
   );
 
-  // Register command invoked by the Code Action
-  // //& تسجيل الأمر الذي يُستدعى من إجراء المصباح
+  // Register command invoked by the Code Action or Command Palette
+  // //& تسجيل الأمر الذي يُستدعى من إجراء المصباح أو لوحة الأوامر
   context.subscriptions.push(
     vscode.commands.registerCommand(
       COMMAND_ID,
-      async (uri: vscode.Uri, selection: vscode.Selection) => {
-        const document = await vscode.workspace.openTextDocument(uri);
-        await runTranslateToAllLangs(document, selection);
+      async (uri?: vscode.Uri, selection?: vscode.Selection) => {
+        let document: vscode.TextDocument;
+        let activeSelection: vscode.Selection;
+
+        if (uri && selection) {
+          // Invoked from Code Action with explicit document + selection
+          // //& يُستدعى من إجراء المصباح مع المستند والتحديد
+          document = await vscode.workspace.openTextDocument(uri);
+          activeSelection = selection;
+        } else {
+          // Invoked from Command Palette — use the active editor
+          // //& يُستدعى من لوحة الأوامر — استخدام المحرر النشط
+          const editor = vscode.window.activeTextEditor;
+          if (!editor) {
+            vscode.window.showWarningMessage(
+              'Open a Dart file and select a string first.'
+            );
+            return;
+          }
+          document = editor.document;
+          activeSelection = editor.selection;
+        }
+
+        await runTranslateToAllLangs(document, activeSelection);
       }
     )
   );

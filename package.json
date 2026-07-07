@@ -2,7 +2,7 @@
   "name": "flutter-localization-json-translation-auto",
   "displayName": "FlutterLocaizationJsonTranslationAuto",
   "description": "Auto-translate and sync Flutter localization JSON files from selected Dart strings.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "flutter-dev",
   "engines": {
     "vscode": "^1.85.0"
