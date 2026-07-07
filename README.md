@@ -25,21 +25,29 @@ Auto-translate and sync Flutter localization JSON files from selected Dart strin
 6. Wait for translation to complete — all locale files are updated
 
 ### Demo Videos
+<!--===========================================================-->
+
+#### 1. Translate to all langs 
+▶️ [1. Translate to all langs (quick access)](https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v1_Translate%20to%20all%20langs_quick%20access.mp4)
 
 <video src="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/raw/main/images/videos/v1_Translate%20to%20all%20langs_quick%20access.mp4" controls width="800">
   <a href="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v1_Translate%20to%20all%20langs_quick%20access.mp4">Show video</a>
 </video>
-*Translate to all langs — quick access*
+
+<!--===========================================================-->
+#### 2. Translate to all langs from Arabic
+▶️ [2. Translate to all langs from Arabic](https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v2_Translate%20to%20all%20langs%20frm%20arabic%20_quick%20access.mp4.mp4)
 
 <video src="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/raw/main/images/videos/v2_Translate%20to%20all%20langs%20frm%20arabic%20_quick%20access.mp4.mp4" controls width="800">
   <a href="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v2_Translate%20to%20all%20langs%20frm%20arabic%20_quick%20access.mp4.mp4">Show video</a>
 </video>
-*Translate to all langs from Arabic*
+<!--===========================================================-->
 
+#### 3. Command palette help
+▶️ [3. Command palette help](https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v3_command%20help.mp4)
 <video src="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/raw/main/images/videos/v3_command%20help.mp4" controls width="800">
   <a href="https://github.com/EslamFares/Flutter-JSON-Auto-Translator-Extension/blob/main/images/videos/v3_command%20help.mp4">Show video</a>
 </video>
-*Command palette help*
 
 ### Example
 
@@ -61,13 +69,13 @@ Text('Welcome to our app')
 
 ## Settings
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `flutterJsonAutoTranslator.translationsPath` | `assets/translations` | Relative path from workspace root to translation JSON files |
-| `flutterJsonAutoTranslator.sourceLocaleFile` | `en-US.json` | Source locale filename — receives original text (or English translation for Arabic flow) |
-| `flutterJsonAutoTranslator.abbreviateLongKeys` | `false` | When enabled, suggested keys use only the first N words for very long text |
-| `flutterJsonAutoTranslator.maxKeyWords` | `5` | Maximum words to use in abbreviated keys (only when `abbreviateLongKeys` is enabled) |
-| `flutterJsonAutoTranslator.stripSelection` | `true` | Strip surrounding quotes (`'`, `"`, `'''`, `"""`) and trailing semicolons from selected text |
+| Setting                                        | Default               | Description                                                                                  |
+| ---------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------- |
+| `flutterJsonAutoTranslator.translationsPath`   | `assets/translations` | Relative path from workspace root to translation JSON files                                  |
+| `flutterJsonAutoTranslator.sourceLocaleFile`   | `en-US.json`          | Source locale filename — receives original text (or English translation for Arabic flow)     |
+| `flutterJsonAutoTranslator.abbreviateLongKeys` | `false`               | When enabled, suggested keys use only the first N words for very long text                   |
+| `flutterJsonAutoTranslator.maxKeyWords`        | `5`                   | Maximum words to use in abbreviated keys (only when `abbreviateLongKeys` is enabled)         |
+| `flutterJsonAutoTranslator.stripSelection`     | `true`                | Strip surrounding quotes (`'`, `"`, `'''`, `"""`) and trailing semicolons from selected text |
 
 ## Requirements
 
