@@ -15,20 +15,20 @@ export function extractSelectedString(
   document: vscode.TextDocument,
   selection: vscode.Selection
 ): string | undefined {
-  const selectedText = document.getText(selection).trim();
-  if (!selectedText) {
+  let text = document.getText(selection).trim();
+  if (!text) {
     return undefined;
   }
 
-  // Match quoted string literals: 'text' or "text"
+  // Match fully quoted string literals: 'text' or "text"
   // //& مطابقة النصوص بين علامات اقتباس مفردة أو مزدوجة
-  const quotedMatch = selectedText.match(/^(['"])(.*)\1$/s);
+  const quotedMatch = text.match(/^(['""])(.*)\1$/s);
   if (quotedMatch) {
     return quotedMatch[2];
   }
 
-  // Expand selection to surrounding quotes when user selects inner text only
-  // //& توسيع التحديد ليشمل علامات الاقتباس عند تحديد النص الداخلي فقط
+  // Check surrounding characters on the line for matching quotes
+  // //& التحقق من الأحرف المحيطة في السطر
   const line = document.lineAt(selection.start.line).text;
   const startIndex = selection.start.character;
   const endIndex = selection.end.character;
@@ -39,13 +39,21 @@ export function extractSelectedString(
     (before === "'" && after === "'") ||
     (before === '"' && after === '"')
   ) {
-    return selectedText;
+    return text;
   }
 
-  // Accept plain selected text as a fallback
-  // //& قبول النص المحدد مباشرة كحل بديل
-  if (selectedText.length > 0) {
-    return selectedText;
+  // Optionally strip quotes and trailing semicolons
+  // //& إزالة علامات الاقتباس والفواصل المنقوطة اختيارياً
+  const config = vscode.workspace.getConfiguration('flutterLocaizationJsonTranslationAuto');
+  if (config.get<boolean>('stripSelection', true)) {
+    text = text.replace(/^'''|^"""/, '');
+    text = text.replace(/'''$|"""$/, '');
+    text = text.replace(/^['"]/, '');
+    text = text.replace(/['";]+$/, '');
+  }
+
+  if (text) {
+    return text;
   }
 
   return undefined;
